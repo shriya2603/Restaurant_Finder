@@ -31,9 +31,7 @@ app.get("/api/v1/restaurants/:id", async (req, res) => {
     const { rows } = await db.query("SELECT * FROM Restaurants WHERE id= $1", [
       req.params.id,
     ]);
-    console.log(req.params.id);
-    console.log(rows);
-    res.status(200).json({ status: "success", data: { restaurants: rows[0] } });
+    res.status(200).json({ status: "success", data: { restaurant: rows[0] } });
   } catch (error) {
     console.log(error);
     res.status(500).send("An error occured ");
@@ -43,15 +41,14 @@ app.get("/api/v1/restaurants/:id", async (req, res) => {
 // Create a restaurant
 app.post("/api/v1/restaurants", async (req, res) => {
   try {
-    const result = await db.query(
-      "INSERT INTO restaurants ( name, location, price_range) VALUES ($1, $2, $3 )",
+    const { rows } = await db.query(
+      "INSERT INTO restaurants ( name, location, price_range) VALUES ($1, $2, $3 ) returning *",
       [req.body.name, req.body.location, req.body.price_range]
     );
-    // console.log(req.body);
-    // console.log(result);
+    // "Returning * " after insert command is to get the inserted row in the postgresql
     res.status(200).json({
       status: "success",
-      message: "Created a restaurant named " + req.body.name,
+      data: { restaurant: rows[0] },
     });
   } catch (error) {
     console.log(error);
@@ -66,14 +63,12 @@ app.post("/api/v1/restaurants", async (req, res) => {
 // Update
 app.put("/api/v1/restaurants/:id", async (req, res) => {
   try {
-    const results = await db.query(
-      "UPDATE Restaurants SET name = $1, location = $2, price_range = $3 WHERE id= $4",
+    const { rows } = await db.query(
+      "UPDATE Restaurants SET name = $1, location = $2, price_range = $3 WHERE id= $4 returning *",
       [req.body.name, req.body.location, req.body.price_range, req.params.id]
     );
-    console.log(results);
-    res
-      .status(200)
-      .json({ status: "success", message: "Updated the Restaurant" });
+    // console.log(results);
+    res.status(200).json({ status: "success", data: { restaurant: rows[0] } });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -90,7 +85,6 @@ app.delete("/api/v1/restaurants/:id", async (req, res) => {
     const result = await db.query("DELETE FROM Restaurants WHERE id= $1", [
       req.params.id,
     ]);
-    console.log(result);
     res.status(200).json({
       status: "success",
       message: "Deleted a restaurant with id " + req.params.id,

@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import RestaurantsFinder from "../apis/RestaurantFinder";
+import { RestaurantsContext } from "../context/RestaurantsContext";
 
 function AddRestaurant() {
+  const { addRestaurants } = useContext(RestaurantsContext);
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [priceRange, setPriceRange] = useState("Price Range");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // To prevent the default behaviour of reloading the page
+    try {
+      const response = await RestaurantsFinder.post("/", {
+        name: name,
+        location: location,
+        price_range: priceRange,
+      });
+      addRestaurants(response.data.data.restaurant);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="mb-4">
       <form action="">
         <div className="form-row">
           <div className="col">
             <input
-              //   value={name}
-              //   onChange={(e) => setName(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
               className="form-control"
               placeholder="name"
@@ -16,8 +37,8 @@ function AddRestaurant() {
           </div>
           <div className="col">
             <input
-              //   value={location}
-              //   onChange={(e) => setLocation(e.target.value)}
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               className="form-control"
               type="text"
               placeholder="location"
@@ -25,8 +46,8 @@ function AddRestaurant() {
           </div>
           <div className="col">
             <select
-              //   value={priceRange}
-              //   onChange={(e) => setPriceRange(e.target.value)}
+              value={priceRange}
+              onChange={(e) => setPriceRange(e.target.value)}
               className="custom-select my-1 mr-sm-2"
             >
               <option disabled>Price Range</option>
@@ -38,7 +59,7 @@ function AddRestaurant() {
             </select>
           </div>
           <button
-            // onClick={handleSubmit}
+            onClick={handleSubmit}
             type="submit"
             className="btn btn-primary"
           >
