@@ -15,3 +15,15 @@ INSERT INTO restaurants ( name, location, price_range) VALUES ('McDonalds', 'New
 
 -- Drop table 
 DROP TABLE restaurants;
+
+-- Create Reviews Table 
+CREATE TABLE reviews (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    review TEXT NOT NULL,
+    rating INT NOT NULL CHECK(rating>=1 AND rating <=5),
+    restaurant_id BIGINT NOT NULL REFERENCES restaurants (id)
+);
+
+-- Instert test data in reviews table 
+INSERT INTO reviews ( name, review, rating,restaurant_id ) VALUES ('Shriya', 'ok foood', 3, 1 );

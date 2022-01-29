@@ -4,7 +4,7 @@ import { RestaurantsContext } from "../context/RestaurantsContext";
 import { useNavigate } from "react-router-dom";
 
 function RestaurantList(props) {
-  let navigate = useNavigate();
+  let history = useNavigate();
   const { restaurants, setRestaurants } = useContext(RestaurantsContext);
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +18,8 @@ function RestaurantList(props) {
     fetchData();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     try {
       const response = await RestaurantsFinder.delete("/" + id);
       // console.log(response);
@@ -32,8 +33,13 @@ function RestaurantList(props) {
     }
   };
 
-  const handleUpdate = (id) => {
-    navigate(`/restaurants/${id}/update`);
+  const handleUpdate = (e, id) => {
+    e.stopPropagation();
+    history(`/restaurants/${id}/update`);
+  };
+
+  const handleRestaurantSelect = (id) => {
+    history("/restaurants/" + id);
   };
 
   return (
@@ -53,14 +59,17 @@ function RestaurantList(props) {
           {restaurants &&
             restaurants.map((restaurant) => {
               return (
-                <tr key={restaurant.id}>
+                <tr
+                  onClick={() => handleRestaurantSelect(restaurant.id)}
+                  key={restaurant.id}
+                >
                   <td>{restaurant.name}</td>
                   <td>{restaurant.location}</td>
                   <td>{"$".repeat(restaurant.price_range)}</td>
                   <td>reviews</td>
                   <td>
                     <button
-                      onClick={() => handleUpdate(restaurant.id)}
+                      onClick={(e) => handleUpdate(e, restaurant.id)}
                       className="btn btn-warning"
                     >
                       Update
@@ -68,7 +77,7 @@ function RestaurantList(props) {
                   </td>
                   <td>
                     <button
-                      onClick={() => handleDelete(restaurant.id)}
+                      onClick={(e) => handleDelete(e, restaurant.id)}
                       className="btn btn-danger"
                     >
                       Delete
