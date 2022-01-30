@@ -15,7 +15,7 @@ function UpdateRestaurant(props) {
     const fetchData = async () => {
       try {
         const response = await RestaurantsFinder.get(`/${id}`);
-        console.log(response.data.data.restaurant);
+        // console.log(response.data.data.restaurant);
         setName(response.data.data.restaurant.name);
         setLocation(response.data.data.restaurant.location);
         setPriceRange(response.data.data.restaurant.price_range);
@@ -34,7 +34,7 @@ function UpdateRestaurant(props) {
         location: location,
         price_range: priceRange,
       });
-      console.log(updatedRestaurant);
+      //console.log(updatedRestaurant);
       history("/");
     } catch (error) {
       console.log(error);

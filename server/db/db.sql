@@ -27,3 +27,18 @@ CREATE TABLE reviews (
 
 -- Instert test data in reviews table 
 INSERT INTO reviews ( name, review, rating,restaurant_id ) VALUES ('Shriya', 'ok foood', 3, 1 );
+
+-- Average rating of a restaurant 
+select trunc(AVG(rating),2) AS average_reviews from reviews where restaurant_id=1;
+
+-- Number of rating of an restaurant 
+select count(rating) from reviews where  restaurant_id=1;
+
+-- Average rating of all restaurant 
+SELECT restaurant_id, AVG(rating), count(rating) FROM reviews GROUP BY restaurant_id;
+
+-- Join restaurant and reviews table 
+SELECT * FROM restaurants LEFT JOIN (SELECT restaurant_id , count(*), TRUNC(AVG(rating),1) as average_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id=reviews.restaurant_id;
+
+-- Get a specific restaurant 
+SELECT * FROM restaurants LEFT JOIN (SELECT restaurant_id , count(*), TRUNC(AVG(rating),1) as average_rating FROM reviews GROUP BY restaurant_id) reviews ON restaurants.id=reviews.restaurant_id WHERE restaurants.id=2;

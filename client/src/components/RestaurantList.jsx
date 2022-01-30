@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import RestaurantsFinder from "../apis/RestaurantFinder";
 import { RestaurantsContext } from "../context/RestaurantsContext";
 import { useNavigate } from "react-router-dom";
+import StarRating from "./StarRating";
 
 function RestaurantList(props) {
   let history = useNavigate();
@@ -17,7 +18,17 @@ function RestaurantList(props) {
     };
     fetchData();
   }, []);
-
+  const renderRating = (restaurant) => {
+    if (!restaurant.count) {
+      return <span className="text-warning ml-1">0 reviews</span>;
+    }
+    return (
+      <>
+        <StarRating rating={restaurant.average_rating} />
+        <span className="text-warning ml-1">({restaurant.count})</span>
+      </>
+    );
+  };
   const handleDelete = async (e, id) => {
     e.stopPropagation();
     try {
@@ -66,7 +77,7 @@ function RestaurantList(props) {
                   <td>{restaurant.name}</td>
                   <td>{restaurant.location}</td>
                   <td>{"$".repeat(restaurant.price_range)}</td>
-                  <td>reviews</td>
+                  <td>{renderRating(restaurant)}</td>
                   <td>
                     <button
                       onClick={(e) => handleUpdate(e, restaurant.id)}
